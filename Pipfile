@@ -1,0 +1,21 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+numpy = "*"
+tqdm = "*"
+pandas = "*"
+seaborn = "*"
+torch = "*"
+torchvision = "*"
+ipykernel = "*"
+kaggle = "*"
+scikit-learn = "*"
+scikit-image = "*"
+
+[requires]
+python_version = "3.7"
