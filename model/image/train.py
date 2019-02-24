@@ -1,8 +1,8 @@
 from tqdm import tqdm_notebook as tqdm
 import torch
-from model.validation import validate_model
-from utils.checkpoint import save_checkpoint
-from utils.common import get_batch_info
+from model.image.validation import validate_model
+from utils.pytorch.utils.checkpoint import save_checkpoint
+from utils.pytorch.utils.common import get_batch_info
 
 
 def train_step(optimizer, loss):

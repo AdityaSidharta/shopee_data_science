@@ -3,10 +3,10 @@ import copy
 import seaborn as sns
 from torch import optim as optim
 
-from callbacks.optim import LR_Finder
-from callbacks.loss import LossRecorder
-from model.train import fit_model_full
-from utils.common import get_batch_info
+from utils.pytorch.callbacks.optim import LR_Finder
+from utils.pytorch.callbacks import LossRecorder
+from model.image.train import fit_model_full
+from utils.pytorch.utils.common import get_batch_info
 from utils.logger import logger
 
 

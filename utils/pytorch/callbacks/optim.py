@@ -1,7 +1,7 @@
 import numpy as np
 import seaborn as sns
 
-from callbacks.callback import CallBacks
+from utils.pytorch.callbacks import CallBacks
 
 
 class OptimCallBacks(CallBacks):

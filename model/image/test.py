@@ -1,7 +1,7 @@
 import torch
 from tqdm import tqdm_notebook as tqdm
 
-from utils.common import get_batch_info
+from utils.pytorch.utils.common import get_batch_info
 
 
 def predict_model(model, test_dataloader, pred_fn):

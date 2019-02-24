@@ -4,7 +4,7 @@ import os
 import torch
 
 from utils.envs import model_cp_path
-from callbacks.callback import CallBacks
+from utils.pytorch.callbacks import CallBacks
 
 
 def save_checkpoint(model, optimizer, fname=None):

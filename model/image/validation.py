@@ -2,7 +2,7 @@ import numpy as np
 from tqdm import tqdm_notebook as tqdm
 import torch
 
-from utils.common import get_batch_info
+from utils.pytorch.utils.common import get_batch_info
 
 
 def validate_model(model, criterion, loss_fn, metric_fn, val_dataloader):

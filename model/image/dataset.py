@@ -40,7 +40,6 @@ class TrainDataset(Dataset):
 
         self.img_array = self.create_img_array(self.df)
         self.label = self.create_label(self.df, attribute)
-        self.encoder_model =
 
     def create_img_array(self, df):
         return df['image_path'].values
