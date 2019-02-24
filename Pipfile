@@ -16,6 +16,9 @@ ipykernel = "*"
 kaggle = "*"
 scikit-learn = "*"
 scikit-image = "*"
+category-encoders = "*"
+xgboost = "*"
+lightgbm = "*"
 
 [requires]
 python_version = "3.7"
