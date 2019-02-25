@@ -21,34 +21,60 @@ class Predictor:
         attrs = {
                 "Features": [],
                 "Camera": [],
+                "Color Family": "",
+                "Phone Model": "",
+                "Brand": "",
                 "Operating System": "",
                 "Network Connections": "",
                 "Memory RAM": "",
-                "Brand": "",
                 "Warranty Period": "",
                 "Storage Capacity": "",
-                "Color Family": "",
-                "Phone Model": "",
                 "Phone Screen Size": ""
                 }
         remaining = title.lower()
+
         (remaining, attrs["Color Family"]) = self.extract_color(remaining)
+        
+        extracted_phone = self.extract_phone(remaining)
+        remaining = extracted_phone["remaining"]
+        attrs["Brand"] = extracted_phone["Brand"]
+        attrs["Phone Model"] = extracted_phone["Phone Model"]
         # print(remaining)
+
         return attrs
 
     def extract_color(self, remaining):
         extracted_color = ""
-        known_colors = self.profiles["Color Family"]
-        for color in known_colors:
-            if color in remaining:
+        for color in self.profiles["Color Family"]:
+            if self.string_found(color, remaining):
                 extracted_color = color
                 remaining = remaining.replace(color, "")
                 return remaining, extracted_color
         for behasa, eng in self.bahasa_colors.items():
-            if behasa in remaining:
+            if self.string_found(behasa, remaining):
                 extracted_color = eng
                 remaining = remaining.replace(behasa, "")
+                break
         return remaining, extracted_color
+
+    def extract_phone(self, remaining):
+        extracted = {
+                "remaining": remaining,
+                "Brand": "",
+                "Phone Model": ""
+                }
+        for brand, phone in self.profiles["Phone Models - Edited"]:
+            phone_str = " ".join([brand, phone])
+            if self.string_found(phone_str, remaining):
+                extracted["Brand"] = brand
+                extracted["Phone Model"] = phone
+                extracted["remaining"] = remaining.replace(
+                        phone_str,
+                        ""
+                        )
+                break
+            # TODO we can do way more than this exact match
+        return extracted
 
     def load_profiles(self):
         profiles = {}
@@ -57,6 +83,18 @@ class Predictor:
                 )
         for k, v in given_data.items():
             profiles[k] = list(v.keys())
+
+        # Fix phone models to separate their brand names
+        replace_models = []
+        for phone_model in profiles["Phone Model"]:
+            brand = phone_model.split()[0]
+            if brand in profiles["Brand"]:
+                replace_model = " ".join(phone_model.split()[1:])
+                replace_models.append((brand, replace_model))
+            else:
+                replace_models.append(("", replace_model))
+        profiles["Phone Models - Edited"] = replace_models
+
         # Overwrite colors because of compound names
         profiles["Color Family"] = [
                 "navy blue", "light blue", "rose gold",
@@ -67,6 +105,16 @@ class Predictor:
                 "multicolor", "black", "apricot", "orange",
                 "green", "white", "red"
                 ]
+
+        # These brands are not in the given profiles
+        profiles["Known Missing Brands"] = [
+                "mobiistar", "toshiba", "canon", "genki",
+                "niko", "motorola", "panasonic", "meizu",
+                "dell", "nikon", "msi", "olympus", "sensi",
+                "ichiko", "changhong", "fujifilm", "leica",
+                "sanken"
+                ]
+
         return profiles
 
     def load_bahasa_colors(self):
@@ -98,6 +146,11 @@ class Predictor:
         bahasa_colors["putih"] = "white"
         bahasa_colors["merah"] = "red"
         return bahasa_colors
+
+    def string_found(self, substr, mainstr):
+        substr = " " + substr.strip() + " "
+        mainstr = " " + mainstr.strip() + " "
+        return substr in mainstr
 
     def fake_example(self):
         attrs = {
