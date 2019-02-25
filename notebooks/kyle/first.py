@@ -1,4 +1,4 @@
-from model.heuristic import mobile
+from model.heuristic.mobile.extractor import *
 import utils.envs as env
 
 import pandas as pd
@@ -14,11 +14,11 @@ mobile_profile = json.loads(
         open(env.mobile_profile_json, "r").read()
         )
 
-M = mobile.Predictor()
+E = Extractor()
 for index, row in mobile_df.iterrows():
-    if index == 3:
+    if index == 609:
         break
 
-    prediction = M.predict(row["title"])
+    extracted = E.extract_from_title(row["title"])
     print(row["title"])
-    print(json.dumps(prediction, indent=4))
+    print(json.dumps(extracted, indent=4))

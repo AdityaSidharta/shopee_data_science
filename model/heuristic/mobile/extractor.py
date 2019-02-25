@@ -3,14 +3,14 @@ import json
 import collections
 
 
-class Predictor:
-    """Predicts attributes for mobile."""
+class Extractor:
+    """Extracts attributes for mobile from title."""
 
     def __init__(self):
         self.profiles = self.load_profiles()
         self.bahasa_colors = self.load_bahasa_colors()
 
-    def predict(self, title):
+    def extract_from_title(self, title):
         """Return high-probability attributes as dict.
 
         All attrs are returned, but may have blank values.
