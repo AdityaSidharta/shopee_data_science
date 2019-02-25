@@ -14,12 +14,11 @@ mobile_profile = json.loads(
         open(env.mobile_profile_json, "r").read()
         )
 
-
-print(mobile_df["title"].head())
-print(json.dumps(mobile_profile, indent=4))
+M = mobile.Predictor()
 for index, row in mobile_df.iterrows():
-    if index == 1:
+    if index == 2:
         break
-    print(index, row["title"], row["Operating System"])
 
-print(mobile.predict("hello world"))
+    prediction = M.predict(row["title"])
+    print(row["title"])
+    print(json.dumps(prediction, indent=4))
