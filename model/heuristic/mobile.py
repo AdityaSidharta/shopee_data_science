@@ -59,6 +59,11 @@ class Predictor:
         (remaining, attrs[storage]) = self.extract_storage(remaining)
         print(remaining)
 
+        # Skip RAM. If capacity + device available, that's more useful
+
+        # Then known features
+        (remaining, attrs["Features"]) = self.extract_features(remaining)
+
         if remaining.strip() == "":
             attrs["All Text Extracted"] = True
 
@@ -147,6 +152,14 @@ class Predictor:
                 extracted_storage = extracted_storage.replace(" ", "")
                 break
         return remaining, extracted_storage
+
+    def extract_features(self, remaining):
+        extracted = []
+        for feature in self.profiles["Features"]:
+            if self.string_found(feature, remaining):
+                extracted.append(feature)
+                remaining = remaining.replace(feature, "")
+        return remaining, extracted
 
     def load_profiles(self):
         profiles = {}
