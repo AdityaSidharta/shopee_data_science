@@ -29,20 +29,44 @@ class Predictor:
                 "Memory RAM": "",
                 "Warranty Period": "",
                 "Storage Capacity": "",
-                "Phone Screen Size": ""
+                "Phone Screen Size": "",
+                "Impossible": False
                 }
         remaining = title.lower()
 
+        # First, is it even a phone?
+        if self.should_skip(title):
+            attrs["Impossible"] = True
+            return attrs
+
+        # Then color
         (remaining, attrs["Color Family"]) = self.extract_color(remaining)
         
+        # Then model + brand
         extracted_phone = self.extract_phone(remaining)
         remaining = extracted_phone["remaining"]
         attrs["Brand"] = extracted_phone["Brand"]
         attrs["Phone Model"] = extracted_phone["Phone Model"]
-        # print(remaining)
+
+        # Then brand
+        if attrs["Brand"] == "":
+            (remaining, attrs["Brand"]) = self.extract_brand(remaining)
+        print(remaining)
 
         return attrs
 
+    def should_skip(self, remaining):
+        skip_names = [
+                "drypers",
+                "mamypoko",
+                "huggies",
+                "pampers"
+                ]
+        for name in skip_names:
+            if self.string_found(name, remaining):
+                return True
+        return False
+    
     def extract_color(self, remaining):
         extracted_color = ""
         for color in self.profiles["Color Family"]:
@@ -74,7 +98,16 @@ class Predictor:
                         )
                 break
             # TODO we can do way more than this exact match
+            # not confident because the names can be weird
         return extracted
+
+    def extract_brand(self, remaining):
+        extracted_brand = ""
+        for brand in self.profiles["Brand"]:
+            if self.string_found(brand, remaining):
+                extracted_brand = brand
+                remaining = remaining.replace(brand, "")
+        return remaining, extracted_brand
 
     def load_profiles(self):
         profiles = {}
@@ -151,19 +184,3 @@ class Predictor:
         substr = " " + substr.strip() + " "
         mainstr = " " + mainstr.strip() + " "
         return substr in mainstr
-
-    def fake_example(self):
-        attrs = {
-                "Features": ["fingerprint sensor", "touchscreen"],
-                "Camera": ["16mp", "2 mp"],
-                "Operating System": "ios",
-                "Network Connections": "",
-                "Memory RAM": "",
-                "Brand": "apple",
-                "Warranty Period": "",
-                "Storage Capacity": "",
-                "Color Family": "",
-                "Phone Model": "",
-                "Phone Screen Size": ""
-                }
-        return attrs

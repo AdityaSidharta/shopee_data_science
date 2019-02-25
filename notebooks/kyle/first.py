@@ -16,7 +16,7 @@ mobile_profile = json.loads(
 
 M = mobile.Predictor()
 for index, row in mobile_df.iterrows():
-    if index == 2:
+    if index == 3:
         break
 
     prediction = M.predict(row["title"])
