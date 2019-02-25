@@ -30,7 +30,8 @@ class Predictor:
                 "Warranty Period": "",
                 "Storage Capacity": "",
                 "Phone Screen Size": "",
-                "Impossible": False
+                "Impossible": False,
+                "All Text Extracted": False
                 }
         remaining = title.lower()
 
@@ -57,6 +58,8 @@ class Predictor:
         (remaining, attrs[storage]) = self.extract_storage(remaining)
         print(remaining)
 
+        if remaining.strip() == "":
+            attrs["All Text Extracted"] = True
         return attrs
 
     def should_skip(self, remaining):
