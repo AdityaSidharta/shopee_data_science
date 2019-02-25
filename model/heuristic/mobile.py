@@ -34,6 +34,7 @@ class Predictor:
                 "All Text Extracted": False
                 }
         remaining = title.lower()
+        remaining = self.rm_fillers(remaining)
 
         # First, is it even a phone?
         if self.should_skip(title):
@@ -60,14 +61,28 @@ class Predictor:
 
         if remaining.strip() == "":
             attrs["All Text Extracted"] = True
+
         return attrs
+
+    def rm_fillers(self, remaining):
+        fillers = [
+                "and", "anti", "new", "brand", "charger",
+                "original", "fast", "promo", "wa", "ini",
+                "hari", "discount", "stock", "chat",
+                "handphone", "deal", "hot"
+                ]
+        for filler in fillers:
+            if self.string_found(filler, remaining):
+                remaining = remaining.replace(filler, "")
+        return remaining
 
     def should_skip(self, remaining):
         skip_names = [
                 "drypers",
                 "mamypoko",
                 "huggies",
-                "pampers"
+                "pampers",
+                "macbook pro"
                 ]
         for name in skip_names:
             if self.string_found(name, remaining):
@@ -120,6 +135,7 @@ class Predictor:
             if self.string_found(brand, remaining):
                 extracted_brand = brand
                 remaining = remaining.replace(brand, "")
+                break
         return remaining, extracted_brand
 
     def extract_storage(self, remaining):
@@ -129,6 +145,7 @@ class Predictor:
                 remaining = remaining.replace(capacity, "")
                 extracted_storage = capacity
                 extracted_storage = extracted_storage.replace(" ", "")
+                break
         return remaining, extracted_storage
 
     def load_profiles(self):
@@ -154,12 +171,13 @@ class Predictor:
             device = " ".join(phone_model.split()[1:])
             if device in skip_devices:
                 continue
-            elif brand in profiles["Brand"]:
-                replace_models.append((brand, device))
+            if brand in profiles["Brand"]:
+                for device_perm in self.str_permutations(device):
+                    replace_models.append((brand, device_perm))
             else:
-                replace_models.append(("", phone_model))
+                for device_perm in self.str_permutations(phone_model):
+                    replace_models.append(("", device_perm))
         replace_models.sort(key=lambda x: len(x[1]), reverse=True)
-        print(json.dumps(replace_models, indent=4))
         profiles["Phone Models - Edited"] = replace_models
 
         # Overwrite colors because of compound names
@@ -195,6 +213,20 @@ class Predictor:
 
         return profiles
 
+    def str_permutations(self, phone):
+        """For example, note4 == note 4."""
+        perms = [phone]
+        phone = " " + phone + " "
+        for i in range(1, 10):
+            i_str = " " + str(i) + " "
+            if i_str in phone:
+                perm_str = phone.replace(
+                        i_str,
+                        str(i) + " "
+                        )
+                perms.append(perm_str.strip())
+        return perms
+
     def load_bahasa_colors(self):
         bahasa_colors = collections.OrderedDict()
         bahasa_colors["berwarna mera muda"] = "pink"
@@ -223,6 +255,19 @@ class Predictor:
         bahasa_colors["hijau"] = "green"
         bahasa_colors["putih"] = "white"
         bahasa_colors["merah"] = "red"
+        # Hack...
+        bahasa_colors["navyblue"] = "navy blue"
+        bahasa_colors["lightblue"] = "light blue"
+        bahasa_colors["rosegold"] = "rose gold"
+        bahasa_colors["darkgrey"] = "dark grey"
+        bahasa_colors["armygreen"] = "army green"
+        bahasa_colors["deepblue"] = "deep blue"
+        bahasa_colors["lightgrey"] = "light grey"
+        bahasa_colors["deepblack"] = "deep black"
+        bahasa_colors["offwhite"] = "off white"
+        bahasa_colors["dark gray"] = "dark grey"
+        bahasa_colors["darkgray"] = "dark grey"
+        bahasa_colors["grey"] = "gray"
         return bahasa_colors
 
     def string_found(self, substr, mainstr):
