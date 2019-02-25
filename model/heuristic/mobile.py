@@ -41,7 +41,7 @@ class Predictor:
 
         # Then color
         (remaining, attrs["Color Family"]) = self.extract_color(remaining)
-        
+
         # Then model + brand
         extracted_phone = self.extract_phone(remaining)
         remaining = extracted_phone["remaining"]
@@ -51,6 +51,10 @@ class Predictor:
         # Then brand
         if attrs["Brand"] == "":
             (remaining, attrs["Brand"]) = self.extract_brand(remaining)
+
+        # Then capacity
+        storage = "Storage Capacity" # just to shorten the line
+        (remaining, attrs[storage]) = self.extract_storage(remaining)
         print(remaining)
 
         return attrs
@@ -66,7 +70,7 @@ class Predictor:
             if self.string_found(name, remaining):
                 return True
         return False
-    
+
     def extract_color(self, remaining):
         extracted_color = ""
         for color in self.profiles["Color Family"]:
@@ -97,8 +101,14 @@ class Predictor:
                         ""
                         )
                 break
-            # TODO we can do way more than this exact match
-            # not confident because the names can be weird
+            elif len(phone) > 3 and self.string_found(phone, remaining):
+                extracted["Brand"] = brand
+                extracted["Phone Model"] = phone
+                extracted["remaining"] = remaining.replace(
+                        phone,
+                        ""
+                        )
+                break
         return extracted
 
     def extract_brand(self, remaining):
@@ -108,6 +118,15 @@ class Predictor:
                 extracted_brand = brand
                 remaining = remaining.replace(brand, "")
         return remaining, extracted_brand
+
+    def extract_storage(self, remaining):
+        extracted_storage = ""
+        for capacity in self.profiles["Capacities - Edited"]:
+            if self.string_found(capacity, remaining):
+                remaining = remaining.replace(capacity, "")
+                extracted_storage = capacity
+                extracted_storage = extracted_storage.replace(" ", "")
+        return remaining, extracted_storage
 
     def load_profiles(self):
         profiles = {}
@@ -119,13 +138,23 @@ class Predictor:
 
         # Fix phone models to separate their brand names
         replace_models = []
+        skip_devices = [
+                "a6000",
+                "6",
+                "a39",
+                "z2",
+                "a5000",
+                "105"
+                ]
         for phone_model in profiles["Phone Model"]:
             brand = phone_model.split()[0]
-            if brand in profiles["Brand"]:
-                replace_model = " ".join(phone_model.split()[1:])
-                replace_models.append((brand, replace_model))
+            device = " ".join(phone_model.split()[1:])
+            if device in skip_devices:
+                continue
+            elif brand in profiles["Brand"]:
+                replace_models.append((brand, device))
             else:
-                replace_models.append(("", replace_model))
+                replace_models.append(("", phone_model))
         profiles["Phone Models - Edited"] = replace_models
 
         # Overwrite colors because of compound names
@@ -146,6 +175,17 @@ class Predictor:
                 "dell", "nikon", "msi", "olympus", "sensi",
                 "ichiko", "changhong", "fujifilm", "leica",
                 "sanken"
+                ]
+
+        # These are all the possible capacities:
+        profiles["Capacities - Edited"] = [
+                "512gb", "512 gb", "256gb", "256 gb", "128gb",
+                "128 gb", "64gb", "64 gb", "32gb", "32 gb",
+                "16gb", "16 gb", "10gb", "10 gb", "8gb", "8 gb",
+                "6gb", "6 gb", "4gb", "4 gb", "3gb", "3 gb",
+                "2gb", "2 gb", "1.5gb", "1.5 gb", "1gb", "1 gb",
+                "512mb", "512 mb", "256mb", "256 mb", "128mb",
+                "128 mb", "4mb", "4 mb"
                 ]
 
         return profiles
