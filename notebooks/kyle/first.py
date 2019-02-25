@@ -22,4 +22,4 @@ for index, row in mobile_df.iterrows():
         break
     print(index, row["title"], row["Operating System"])
 
-print(mobile.predict())
+print(mobile.predict("hello world"))
