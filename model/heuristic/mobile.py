@@ -155,6 +155,8 @@ class Predictor:
                 replace_models.append((brand, device))
             else:
                 replace_models.append(("", phone_model))
+        replace_models.sort(key=lambda x: len(x[1]), reverse=True)
+        print(json.dumps(replace_models, indent=4))
         profiles["Phone Models - Edited"] = replace_models
 
         # Overwrite colors because of compound names
