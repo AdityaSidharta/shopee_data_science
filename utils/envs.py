@@ -10,8 +10,6 @@ logger_path = os.path.join(output_path, "logs")
 result_path = os.path.join(output_path, "result")
 result_metadata_path = os.path.join(output_path, 'result_metadata')
 
-logger_repo = os.path.join(logger_path, "logger.log")
-
 beauty_image_path = os.path.join(data_path, 'beauty_image')
 fashion_image_path = os.path.join(data_path, 'fashion_image')
 mobile_image_path = os.path.join(data_path, 'mobile_image')

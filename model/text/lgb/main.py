@@ -1,8 +1,12 @@
 import pandas as pd
-from utils.envs import *
 from sklearn.externals import joblib
-from utils.common import create_directory, get_datetime
-from model.text.lgb.model import create_label, create_prediction
+
+from model.text.lgb.lgb_model import create_label, create_prediction
+from model.text.lgb.config import config
+from utils.common import create_directory
+from utils.envs import *
+from utils.logger import logger
+from utils.common import get_datetime
 
 beauty_topic = ['Colour_group', 'Brand', 'Benefits', 'Product_texture', 'Skin_type']
 fashion_topic =['Pattern', 'Collar Type', 'Sleeves', 'Fashion Trend',
@@ -14,6 +18,9 @@ mobile_topic = ['Operating System', 'Features',
 
 
 if __name__ == '__main__':
+    logger.setup_logger('lgb')
+    datetime = get_datetime()
+
     beauty_train = pd.read_csv(beauty_train_repo)
     beauty_val = pd.read_csv(beauty_val_repo)
 
@@ -31,10 +38,18 @@ if __name__ == '__main__':
     fashion_result_dict = create_prediction(fashion_dict, 'fashion', fashion_topic)
     mobile_result_dict = create_prediction(mobile_dict, 'mobile', mobile_topic)
 
-    datetime = get_datetime()
     model_path = os.path.join(result_path, 'lgb_{}').format(datetime)
     model_metadata_path = os.path.join(result_metadata_path, 'lgb_{}').format(datetime)
 
     create_directory(model_path)
     create_directory(model_metadata_path)
 
+    joblib.dump(beauty_dict, os.path.join(model_path, 'beauty_dict.pkl'))
+    joblib.dump(fashion_dict, os.path.join(model_path, 'fashion_dict.pkl'))
+    joblib.dump(mobile_dict, os.path.join(model_path, 'mobile_dict.pkl'))
+
+    joblib.dump(beauty_result_dict, os.path.join(model_path, 'beauty_result_dict.pkl'))
+    joblib.dump(fashion_result_dict, os.path.join(model_path, 'fashion_result_dict.pkl'))
+    joblib.dump(mobile_result_dict, os.path.join(model_path, 'mobile_result_dict.pkl'))
+
+    config.save(os.path.join(model_metadata_path, 'config.csv'))

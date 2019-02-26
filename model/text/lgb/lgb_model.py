@@ -1,20 +1,19 @@
-from utils.envs import *
-import pandas as pd
-import numpy as np
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.decomposition import TruncatedSVD
-from category_encoders import OrdinalEncoder
-from sklearn.model_selection import train_test_split
-import xgboost as xgb
-import lightgbm as lgb
-from sklearn.externals import joblib
-import datetime
 import string
+
+import lightgbm as lgb
+from category_encoders import OrdinalEncoder
+from sklearn.decomposition import TruncatedSVD
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.model_selection import train_test_split
+
+from model.text.lgb.config import config
+from model.text.lgb.tuning import choose_eta
+from utils.logger import logger
 
 
 def text_process(s):
     s = str(s)
-    s.translate(str.maketrans('','',string.punctuation))
+    s.translate(str.maketrans('', '', string.punctuation))
     s = s.lower()
     return s
 
@@ -29,7 +28,7 @@ def create_label(df, test_df, topic):
     feature_encoder = TfidfVectorizer()
     feature_encoder.fit(feature_array)
     feature_attr = feature_encoder.transform(feature_array)
-    feature_decomposer = TruncatedSVD(500)
+    feature_decomposer = TruncatedSVD(config.n_svd)
     feature_decomposer.fit(feature_attr)
     feature_attr = feature_decomposer.transform(feature_attr)
 
@@ -63,6 +62,7 @@ def create_label(df, test_df, topic):
 def create_prediction(topic_dict, topic, column_list):
     result_dict = {}
     for column in column_list:
+        logger.info('Prediction on {}, {}'.format(topic, column))
         X_train = topic_dict['X_train_{}'.format(topic)]
         Y_train = topic_dict['Y_train_{}_{}'.format(topic, column)][column].values
 
@@ -76,28 +76,26 @@ def create_prediction(topic_dict, topic, column_list):
 
         ddev = lgb.Dataset(X_dev, label=Y_dev)
         dval = lgb.Dataset(X_val, label=Y_val)
+        num_class = Y_train.max() + 1
+        chosen_eta = choose_eta(ddev, dval, num_class)
+        logger.info('Chosen eta for {} : {}'.format(column, chosen_eta))
 
         params = {'objective': 'multiclass',
-                  'eta': 0.01,
+                  'eta': chosen_eta,
                   'max_depth': 6,
                   'num_leaves': 63,
                   "feature_fraction": 0.7,
                   "bagging_fraction": 0.7,
                   'silent': 1,
-                  'nthread': 6,
-                  'num_class': Y_train.max() + 1}
+                  'nthread': config.n_threads,
+                  'num_class': num_class}
 
-        bst = lgb.train(params, ddev, num_boost_round=2000, valid_sets=[ddev, dval], valid_names=['ddev', 'dval'],
+        bst = lgb.train(params, ddev, num_boost_round=config.n_round, valid_sets=[ddev, dval], valid_names=['ddev', 'dval'],
                         early_stopping_rounds=50)
+        logger.info('{} ddev loss : {}'.format(column, bst.best_score['ddev']['multi_logloss']))
+        logger.info('{} dval loss : {}'.format(column, bst.best_score['dval']['multi_logloss']))
         Y_pred = bst.predict(X_test)
         result_dict['Y_pred_{}_{}'.format(topic, column)] = Y_pred
-
-    #        Y_class = Y_pred.argmax(1)
-    #        Y_class_df = pd.DataFrame(Y_class, columns = topic_dict['Y_colname_{}_{}'.format(topic, column)])
-    #        Y_class_result = topic_dict['Y_encoder_{}_{}'.format(topic, column)].inverse_transform(Y_class_df)
-    #        result = pd.DataFrame({
-    #            'id': topic_dict['itemid_test_{}'.format(topic)].apply(lambda x : str(x) + '_{}'.format(column)),
-    #            'tagging': Y_class_result[column].values.astype(int).astype(str)
-    #        })
-    #        result_dict['result_df_{}_{}'.format(topic, column)] = result
     return result_dict
+
+

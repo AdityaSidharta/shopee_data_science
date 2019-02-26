@@ -8,7 +8,7 @@ def create_directory(directory):
 
 
 def get_datetime():
-    return datetime.datetime.now().strftime('%Y%m%D-%H%M%S')
+    return datetime.datetime.now().strftime('%Y%m%d-%H%M%S')
 
 
 def get_date():
