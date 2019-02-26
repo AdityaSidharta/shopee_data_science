@@ -10,3 +10,6 @@ setup:
 
 format:
 	black .
+
+text:
+	bash bins/text.sh
