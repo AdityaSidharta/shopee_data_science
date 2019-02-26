@@ -8,6 +8,7 @@ output_path = os.path.join(project_path, "output")
 model_cp_path = os.path.join(output_path, "model_checkpoint")
 logger_path = os.path.join(output_path, "logs")
 result_path = os.path.join(output_path, "result")
+result_metadata_path = os.path.join(output_path, 'result_metadata')
 
 logger_repo = os.path.join(logger_path, "logger.log")
 
