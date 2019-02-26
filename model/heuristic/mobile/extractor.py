@@ -242,10 +242,9 @@ class Extractor:
 
     def load_bahasa_colors(self):
         bahasa_colors = collections.OrderedDict()
-        bahasa_colors["berwarna mera muda"] = "pink"
+        bahasa_colors["mera muda"] = "pink"
         bahasa_colors["biru laut"] = "navy blue"
         bahasa_colors["biru muda"] = "light blue"
-        bahasa_colors["mawar emas"] = "rose gold"
         bahasa_colors["abu-abu gelap"] = "dark grey"
         bahasa_colors["hijau tentara"] = "army green"
         bahasa_colors["biru tua"] = "deep blue"
@@ -253,7 +252,8 @@ class Extractor:
         bahasa_colors["hitam pekat"] = "deep black"
         bahasa_colors["putih pucat"] = "off white"
         bahasa_colors["beraneka warna"] = "multicolor"
-        bahasa_colors["warna jingga"] = "orange"
+        bahasa_colors["jingga"] = "orange"
+        bahasa_colors["oranye"] = "orange"
         bahasa_colors["biru"] = "blue"
         bahasa_colors["emas"] = "gold"
         bahasa_colors["coklat"] = "brown"
