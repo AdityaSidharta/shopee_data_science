@@ -32,8 +32,7 @@ all_models = []
 for phone_model in mobile_profile["Phone Model"]:
     brand = phone_model.split()[0]
     device = " ".join(phone_model.split()[1:])
-    if brand in mobile_profile["Brand"]:
-        all_models.append((brand, device))
+    all_models.append((brand, device))
 all_models.sort(key=lambda x: len(x[1]), reverse=True)
 
 # Scrape sure things from API
@@ -43,12 +42,20 @@ for i, device in enumerate(all_models):
         "Phone Model": device[1],
         "Brand": device[0]
         })
-    # print(device)
-    # # if i > 40 and i < 50:
-    # #     print(device)
-    # #     En.enrich({
-    # #         "Phone Model": device[1],
-    # #         "Brand": device[0]
-    # #         })
-    # if i == 50:
-    #     break
+
+# # Clean up the missing ones
+# hardcode_dir = "./data/fono_api"
+# filenames = [i for i in os.walk(hardcode_dir)][0][-1]
+# for filename in filenames:
+#     phones = json.loads(open(hardcode_dir + "/" + filename).read())
+#     if len(phones) > 0:
+#         continue
+#     (brand, phone_model) = filename[:-5].split("_")
+#     device = (brand, phone_model)
+#     print(device)
+#     break
+# 
+# En.enrich({
+#     "Phone Model": "aspire 6",
+#     "Brand": "acer"
+#     })
