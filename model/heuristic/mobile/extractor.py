@@ -87,7 +87,8 @@ class Extractor:
                 "mamypoko",
                 "huggies",
                 "pampers",
-                "macbook pro"
+                "macbook pro",
+                "goo.n"
                 ]
         for name in skip_names:
             if self.string_found(name, remaining):
