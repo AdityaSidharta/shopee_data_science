@@ -1,4 +1,5 @@
 from model.heuristic.mobile.extractor import *
+from model.heuristic.mobile.enricher import *
 import utils.envs as env
 
 import pandas as pd
@@ -14,11 +15,13 @@ mobile_profile = json.loads(
         open(env.mobile_profile_json, "r").read()
         )
 
-E = Extractor()
+Ex = Extractor()
+En = Enricher()
 for index, row in mobile_df.iterrows():
-    if index == 609:
+    if index == 2:
         break
 
-    extracted = E.extract_from_title(row["title"])
+    extracted = Ex.extract_from_title(row["title"])
+    enriched = En.enrich(extracted)
     print(row["title"])
-    print(json.dumps(extracted, indent=4))
+    print(json.dumps(enriched, indent=4))
