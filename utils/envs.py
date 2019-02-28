@@ -1,4 +1,7 @@
 import os
+import utils.api_keys
+
+fono_key = utils.api_keys.FONO_API_KEY
 
 project_path = os.getenv("PROJECT_PATH")
 
