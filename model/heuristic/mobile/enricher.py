@@ -15,8 +15,10 @@ class Enricher:
         phones = self.search(extracted)
         if len(phones) == 0:
             print("No Matches Found.")
-        for phone in phones:
-            print(json.dumps(phone, indent=4))
+        elif len(phones) > 1:
+            print("Ahh!")
+        elif len(phones) == 1:
+            print(json.dumps(phones[0], indent=4))
         return extracted
 
     def search(self, extracted):
@@ -31,18 +33,21 @@ class Enricher:
 
     def get_phones(self, device, brand):
         """Get phones from file cache or API."""
+        # Very messy. Needs rewrite.
         fono_path = env.fono_data_path
         filename = "{}_{}.json".format(brand, device)
         filepath = os.path.join(fono_path, filename)
         if os.path.exists(filepath):
             phones = json.loads(open(filepath, "r").read())
         else:
+            # For now
+            return []
             if brand and device:
                 phones = self.Fon.getdevice(device, brand=brand)
             else:
                 phones = self.Fon.getdevice(device)
             if phones == "No Matching Results Found.":
-                if device.split()[-1] in [str(i) for i in range(1, 10)]:
+                if device.split()[-1] in [str(i) for i in range(1, 10)] and len(device) > 1:
                     # Recursively get phones if last word
                     # is a number from 1-9 (e.g. Zenfone zc 1)
                     self.get_phones(device[:-2], brand)
