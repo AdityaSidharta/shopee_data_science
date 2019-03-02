@@ -86,14 +86,18 @@ def create_prediction(topic_dict, topic, column_list):
                   'num_leaves': 63,
                   "feature_fraction": 0.7,
                   "bagging_fraction": 0.7,
+                  "metric": ['multi_logloss','multi_error'],
                   'silent': 1,
                   'nthread': config.n_threads,
                   'num_class': num_class}
 
-        bst = lgb.train(params, ddev, num_boost_round=config.n_round, valid_sets=[ddev, dval], valid_names=['ddev', 'dval'],
+        bst = lgb.train(params, ddev, num_boost_round=config.n_round, valid_sets=[ddev, dval],
+                        valid_names=['ddev', 'dval'],
                         early_stopping_rounds=50)
         logger.info('{} ddev loss : {}'.format(column, bst.best_score['ddev']['multi_logloss']))
+        logger.info('{} ddev error rate : {}'.format(column, bst.best_score['ddev']['multi_error']))
         logger.info('{} dval loss : {}'.format(column, bst.best_score['dval']['multi_logloss']))
+        logger.info('{} dval error rate : {}'.format(column, bst.best_score['dval']['multi_error']))
         Y_pred = bst.predict(X_test)
         result_dict['Y_pred_{}_{}'.format(topic, column)] = Y_pred
     return result_dict

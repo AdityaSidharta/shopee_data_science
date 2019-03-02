@@ -19,6 +19,7 @@ scikit-image = "*"
 category-encoders = "*"
 xgboost = "*"
 lightgbm = "*"
+argparse = "*"
 
 [requires]
 python_version = "3.7"
