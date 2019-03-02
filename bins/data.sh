@@ -3,6 +3,7 @@
 source config.sh
 kaggle competitions download -c ndsc-advanced -p data/
 
+mkdir -p data
 cd data/
 unzip \*.zip
 rm *.zip
