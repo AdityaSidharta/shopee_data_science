@@ -2,12 +2,12 @@ import argparse
 import pandas as pd
 from sklearn.externals import joblib
 
-from model.text.lgb.lgb_model import create_label, create_prediction
 from model.text.lgb.config import config
+from model.text.lgb.lgb_model import create_label, create_prediction
 from utils.common import create_directory
+from utils.common import get_datetime
 from utils.envs import *
 from utils.logger import logger
-from utils.common import get_datetime
 
 beauty_topic = ['Colour_group', 'Brand', 'Benefits', 'Product_texture', 'Skin_type']
 fashion_topic =['Pattern', 'Collar Type', 'Sleeves', 'Fashion Trend',

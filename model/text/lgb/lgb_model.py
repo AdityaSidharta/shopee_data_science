@@ -1,5 +1,6 @@
 import string
 
+import pandas as pd
 import lightgbm as lgb
 from category_encoders import OrdinalEncoder
 from sklearn.decomposition import TruncatedSVD
@@ -7,7 +8,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
 
 from model.text.lgb.config import config
-from model.text.lgb.tuning import choose_eta
+from model.text.lgb.eta_zoo import eta_dict
 from utils.logger import logger
 
 
@@ -77,7 +78,8 @@ def create_prediction(topic_dict, topic, column_list):
         ddev = lgb.Dataset(X_dev, label=Y_dev)
         dval = lgb.Dataset(X_val, label=Y_val)
         num_class = Y_train.max() + 1
-        chosen_eta = choose_eta(ddev, dval, num_class)
+        #chosen_eta = choose_eta(ddev, dval, num_class)
+        chosen_eta = eta_dict['{}_{}'.format(topic, column)]
         logger.info('Chosen eta for {} : {}'.format(column, chosen_eta))
 
         params = {'objective': 'multiclass',
@@ -86,7 +88,7 @@ def create_prediction(topic_dict, topic, column_list):
                   'num_leaves': 63,
                   "feature_fraction": 0.7,
                   "bagging_fraction": 0.7,
-                  "metric": ['multi_logloss','multi_error'],
+                  "metric": ['multi_logloss', 'multi_error'],
                   'silent': 1,
                   'nthread': config.n_threads,
                   'num_class': num_class}
@@ -98,8 +100,12 @@ def create_prediction(topic_dict, topic, column_list):
         logger.info('{} ddev error rate : {}'.format(column, bst.best_score['ddev']['multi_error']))
         logger.info('{} dval loss : {}'.format(column, bst.best_score['dval']['multi_logloss']))
         logger.info('{} dval error rate : {}'.format(column, bst.best_score['dval']['multi_error']))
+        column_dict = {value2: value1 for value1, value2
+                       in topic_dict['Y_encoder_{}_{}'.format(topic, column)].mapping[0]['mapping']}
+        column_name = ['NA_VALUE'] + [column_dict[i] for i in range(1, num_class)]
         Y_pred = bst.predict(X_test)
-        result_dict['Y_pred_{}_{}'.format(topic, column)] = Y_pred
+        Y_pred_df = pd.DataFrame(Y_pred, columns=column_name)
+        result_dict[column] = Y_pred_df
     return result_dict
 
 
