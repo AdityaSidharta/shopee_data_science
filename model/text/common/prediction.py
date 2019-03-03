@@ -1,13 +1,13 @@
 import pandas as pd
 import numpy as np
-
+from model.text.common.topic import beauty_columns, fashion_columns, mobile_columns
 
 def predict_single(topic_test_df, topic_result_dict):
     result_list = []
     for column in topic_result_dict.keys():
         raw_df = topic_result_dict[column]
         raw_df_columns = raw_df.columns
-        raw_df_coldict = {key: value.split('.')[0] for key, value in enumerate(raw_df_columns)}
+        raw_df_coldict = {key: str(value).split('.')[0] for key, value in enumerate(raw_df_columns)}
         result_array = raw_df.values.argmax(1)
         result = np.vectorize(raw_df_coldict.get)(result_array)
         result_df = pd.DataFrame({
@@ -30,7 +30,7 @@ def predict_threshold(topic_test_df, topic_result_dict, threshold):
         sorted_value = sorted_value[:, ::-1]
         cumsum_value = np.cumsum(sorted_value, axis=1)
         raw_df_columns = raw_df.columns
-        raw_df_coldict = {key: value.split('.')[0] for key, value in enumerate(raw_df_columns)}
+        raw_df_coldict = {key: str(value).split('.')[0] for key, value in enumerate(raw_df_columns)}
 
         for idx in range(len(itemid_list)):
             n_preds = np.searchsorted(cumsum_value[idx], threshold)
@@ -43,8 +43,26 @@ def predict_threshold(topic_test_df, topic_result_dict, threshold):
     return pd.DataFrame(result_list)
 
 
-def concat_submission(beauty_submission_df, fashion_submission_df, mobile_submission_df, example_submission_df):
+def build_prediction_list(beauty_test_df, fashion_test_df, mobile_test_df):
+    prediction_list = []
+    for itemid in beauty_test_df['itemid'].values.tolist():
+        for column in beauty_columns:
+            prediction_list.append(str(itemid) + '_{}'.format(column))
+    for itemid in fashion_test_df['itemid'].values.tolist():
+        for column in fashion_columns:
+            prediction_list.append(str(itemid) + '_{}'.format(column))
+    for itemid in mobile_test_df['itemid'].values.tolist():
+        for column in mobile_columns:
+            prediction_list.append(str(itemid) + '_{}'.format(column))
+    return pd.DataFrame({
+        'id': prediction_list
+    })
+
+
+def concat_submission(beauty_submission_df, fashion_submission_df, mobile_submission_df,
+                      beauty_test_df, fashion_test_df, mobile_test_df):
+    prediction_df = build_prediction_list(beauty_test_df, fashion_test_df, mobile_test_df)
     answer_df = pd.concat([beauty_submission_df, fashion_submission_df, mobile_submission_df])
-    assert answer_df.shape == example_submission_df.shape
-    submission_df = example_submission_df[['id']].merge(answer_df, on='id', how='left')
+    assert len(answer_df) == len(prediction_df)
+    submission_df = prediction_df[['id']].merge(answer_df, on='id', how='left')
     return submission_df

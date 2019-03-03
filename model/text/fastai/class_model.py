@@ -46,9 +46,9 @@ def fastai_prediction(train_df, test_df, columns, data_lm, RESULT_PATH):
         learn_class.load_encoder(RESULT_PATH / 'encoder_lm.pkl')
 
         learn_class.fit_one_cycle(1, 1e-1, moms=(0.8, 0.7))
-#        learn_class.fit_one_cycle(10, 1e-2, moms=(0.8, 0.7))
-#        learn_class.unfreeze()
-#        learn_class.fit_one_cycle(10, 1e-2, moms=(0.8, 0.7))
+        learn_class.fit_one_cycle(10, 1e-2, moms=(0.8, 0.7))
+        learn_class.unfreeze()
+        learn_class.fit_one_cycle(20, 1e-2, moms=(0.8, 0.7))
 
         train_acc = learn_class.validate(learn_class.data.train_dl)[1].item()
         val_acc = learn_class.validate(learn_class.data.valid_dl)[1].item()

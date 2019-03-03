@@ -10,4 +10,4 @@ rm *.zip
 chmod -R 777 ./
 cd ../
 
-python model/utils/split_data.py
+python model/common/split_data.py

@@ -2,19 +2,12 @@ import argparse
 from fastai.text import *
 from sklearn.externals import joblib
 
+from model.text.common.topic import beauty_columns, fashion_columns, mobile_columns
 from model.text.fastai.class_model import fastai_prediction
 from model.text.fastai.lm_model import create_data_lm, create_model_lm, load_lm
 from utils.common import create_directory, get_datetime
 from utils.envs import *
 from utils.logger import logger
-
-beauty_columns = ['Colour_group', 'Brand', 'Benefits', 'Product_texture', 'Skin_type']
-fashion_columns =['Pattern', 'Collar Type', 'Sleeves', 'Fashion Trend',
-                'Clothing Material']
-mobile_columns = ['Operating System', 'Features',
-               'Network Connections', 'Memory RAM', 'Brand', 'Warranty Period',
-               'Storage Capacity', 'Color Family', 'Phone Model', 'Camera',
-               'Phone Screen Size']
 
 if __name__ == '__main__':
     logger.setup_logger('fastai')

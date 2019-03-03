@@ -14,6 +14,8 @@ beauty_image_path = os.path.join(data_path, 'beauty_image')
 fashion_image_path = os.path.join(data_path, 'fashion_image')
 mobile_image_path = os.path.join(data_path, 'mobile_image')
 
+sample_submission_repo = os.path.join(data_path, 'data_info_val_sample_submission.csv')
+
 beauty_train_repo = os.path.join(data_path, 'beauty_data_info_train_competition.csv')
 beauty_dev_repo = os.path.join(data_path, 'beauty_data_info_dev_competition.csv')
 beauty_val_repo = os.path.join(data_path, 'beauty_data_info_val_competition.csv')

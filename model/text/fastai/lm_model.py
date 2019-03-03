@@ -14,9 +14,9 @@ def create_model_lm(data_lm):
     learn_lm = language_model_learner(data_lm, AWD_LSTM, drop_mult=0.3)
 
     learn_lm.fit_one_cycle(1, 0.1, moms=(0.8, 0.7))
-#    learn_lm.fit_one_cycle(10, 0.01, moms=(0.8, 0.7))
-#    learn_lm.unfreeze()
-#    learn_lm.fit_one_cycle(10, 0.01, moms=(0.8, 0.7))
+    learn_lm.fit_one_cycle(10, 0.01, moms=(0.8, 0.7))
+    learn_lm.unfreeze()
+    learn_lm.fit_one_cycle(20, 0.01, moms=(0.8, 0.7))
 
     return learn_lm
 
