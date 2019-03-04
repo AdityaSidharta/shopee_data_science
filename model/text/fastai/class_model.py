@@ -50,9 +50,15 @@ def fastai_prediction(train_df, test_df, columns, data_lm, RESULT_PATH):
         learn_class.unfreeze()
         learn_class.fit_one_cycle(20, 1e-2, moms=(0.8, 0.7))
 
-        train_acc = learn_class.validate(learn_class.data.train_dl)[1].item()
-        val_acc = learn_class.validate(learn_class.data.valid_dl)[1].item()
+        train_metric = learn_class.validate(learn_class.data.train_dl)
+        val_metric = learn_class.validate(learn_class.data.valid_dl)
+        train_loss = train_metric[0]
+        val_loss = val_metric[0]
+        train_acc = train_metric[1].item()
+        val_acc = val_metric[1].item()
 
+        logger.info('Train Loss on Topic {} : {}'.format(column, train_loss))
+        logger.info('Validation Loss on Topic {} : {}'.format(column, val_loss))
         logger.info('Train Accuracy on Topic {} : {}'.format(column, train_acc))
         logger.info('Validation Accuracy on Topic {} : {}'.format(column, val_acc))
 
