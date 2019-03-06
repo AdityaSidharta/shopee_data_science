@@ -1,0 +1,23 @@
+eta_dict = {
+    'beauty_Colour_group': 0.05,
+    'beauty_Brand': 0.01,
+    'beauty_Benefits': 0.01,
+    'beauty_Product_texture': 0.05,
+    'beauty_Skin_type': 0.1,
+    'fashion_Pattern': 0.05,
+    'fashion_Collar Type': 0.05,
+    'fashion_Sleeves': 0.1,
+    'fashion_Fashion Trend': 0.05,
+    'fashion_Clothing Material': 0.05,
+    'mobile_Operating System': 0.05,
+    'mobile_Features': 0.1,
+    'mobile_Network Connections': 0.1,
+    'mobile_Memory RAM': 0.05,
+    'mobile_Brand': 0.01,
+    'mobile_Warranty Period': 0.05,
+    'mobile_Storage Capacity': 0.05,
+    'mobile_Color Family': 0.01,
+    'mobile_Phone Model': 0.01,
+    'mobile_Camera': 0.05,
+    'mobile_Phone Screen Size': 0.1
+}
