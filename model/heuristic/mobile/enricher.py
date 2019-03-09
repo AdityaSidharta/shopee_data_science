@@ -18,12 +18,12 @@ class Enricher:
         extracted["Enriched"] = True
         if len(self.phones_from_api) == 0:
             extracted["Enriched"] = False
-        elif len(self.phones_from_api) > 1:
-            # print(json.dumps(self.phones_from_api, indent=4))
-            pass
-        elif len(self.phones_from_api) == 1:
-            # print(json.dumps(self.phones_from_api[0]["size"], indent=4))
-            pass
+        # elif len(self.phones_from_api) > 1:
+        #     # print(json.dumps(self.phones_from_api, indent=4))
+        #     pass
+        # elif len(self.phones_from_api) == 1:
+        #     # print(json.dumps(self.phones_from_api[0], indent=4))
+        #     pass
         extracted["Operating System"] = self.get_os()
         extracted["Network Connections"] = self.get_networks()
         capacity = extracted["Storage Capacity"]
@@ -31,6 +31,10 @@ class Enricher:
         extracted["Storage Capacity"] = capacity
         extracted["Memory RAM"] = memory
         extracted["Phone Screen Size"] = self.get_size()
+        features = set(self.get_features())
+        for f in extracted["Features"]:
+            features.add(f)
+        extracted["Features"] = list(features)
         return extracted
 
     def search(self, extracted):
@@ -193,6 +197,68 @@ class Enricher:
                 else:
                     return "more than 5.6 inches"
         return ""
+
+    def get_features(self):
+        phones = self.phones_from_api
+        features = []
+        if len(phones) != 1:
+            return features
+        phone = phones[0]
+        if "card_slot" in phone and phone["card_slot"] != "No":
+            features.append("expandable memory")
+        if "type" in phone and \
+                self.string_found(
+                        "touchscreen",
+                        phone["type"].replace(",", "").lower()):
+            features.append("touchscreen")
+        if "sensors" in phone and \
+                self.string_found(
+                        "fingerprint",
+                        phone["sensors"].replace(",", "").lower()):
+            features.append("fingerprint sensor")
+        if "body_c" in phone and \
+                self.string_found(
+                        "dust",
+                        phone["body_c"].replace(",", "").lower()):
+            features.append("dustproof")
+        if "body_c" in phone and \
+                self.string_found(
+                        "dustproof",
+                        phone["body_c"].replace(",", "").lower()):
+            features.append("dustproof")
+        if "body_c" in phone and \
+                self.string_found(
+                        "water/dust",
+                        phone["body_c"].replace(",", "").lower()):
+            features.append("dustproof")
+            features.append("waterproof")
+        if "body_c" in phone and \
+                self.string_found(
+                        "dust/water",
+                        phone["body_c"].replace(",", "").lower()):
+            features.append("dustproof")
+            features.append("waterproof")
+        if "body_c" in phone and \
+                self.string_found(
+                        "water proof",
+                        phone["body_c"].replace(",", "").lower()):
+            features.append("waterproof")
+        if "body_c" in phone and \
+                self.string_found(
+                        "waterproof",
+                        phone["body_c"].replace(",", "").lower()):
+            features.append("waterproof")
+        if "wlan" in phone and \
+                self.string_found(
+                        "wi-fi",
+                        phone["wlan"].replace(",", "").lower()):
+            features.append("wifi")
+        if "gps" in phone and \
+                self.string_found(
+                        "yes",
+                        phone["gps"].replace(",", "").lower()):
+            features.append("gps")
+        return features
 
     def string_found(self, substr, mainstr):
         substr = " " + substr.strip() + " "
