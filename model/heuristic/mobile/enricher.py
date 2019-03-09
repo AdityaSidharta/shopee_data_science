@@ -21,8 +21,9 @@ class Enricher:
             # print(json.dumps(self.phones_from_api, indent=4))
             extracted["Operating System"] = self.get_os()
         elif len(self.phones_from_api) == 1:
-            # print(json.dumps(self.phones_from_api[0], indent=4))
+            # print(json.dumps(self.phones_from_api[0]["technology"], indent=4))
             extracted["Operating System"] = self.get_os()
+            extracted["Network Connections"] = self.get_networks()
         return extracted
 
     def search(self, extracted):
@@ -83,6 +84,35 @@ class Enricher:
             else:
                 return os
         elif len(list(os_set)) > 1:
+            # TODO account for more than one OS
+            return ""
+        else: # 0
+            return ""
+
+    def get_networks(self):
+        phones = self.phones_from_api
+        networks = set()
+        for phone in phones:
+            if "technology" not in phone:
+                continue
+            technology = phone["technology"].lower()
+            if self.string_found("gsm", technology):
+                networks.add("4g")
+            elif self.string_found("hspa", technology):
+                networks.add("3.5g")
+            elif self.string_found("cdma", technology):
+                networks.add("3g")
+            elif self.string_found("evdo", technology):
+                networks.add("2g")
+            elif self.string_found("no cellular", technology):
+                networks.add("none")
+        if len(list(networks)) == 1:
+            network = list(networks)[0]
+            if network == "none":
+                return ""
+            else:
+                return network
+        elif len(list(networks)) > 1:
             # TODO account for more than one OS
             return ""
         else: # 0
