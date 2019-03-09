@@ -3,6 +3,7 @@ import utils.envs as env
 import json
 import collections
 import os
+import re
 
 
 class Enricher:
@@ -19,11 +20,16 @@ class Enricher:
             extracted["Enriched"] = False
         elif len(self.phones_from_api) > 1:
             # print(json.dumps(self.phones_from_api, indent=4))
-            extracted["Operating System"] = self.get_os()
+            pass
         elif len(self.phones_from_api) == 1:
             # print(json.dumps(self.phones_from_api[0]["technology"], indent=4))
-            extracted["Operating System"] = self.get_os()
-            extracted["Network Connections"] = self.get_networks()
+            pass
+        extracted["Operating System"] = self.get_os()
+        extracted["Network Connections"] = self.get_networks()
+        capacity = extracted["Storage Capacity"]
+        (capacity, memory) = self.get_cap_n_mem(capacity)
+        extracted["Storage Capacity"] = capacity
+        extracted["Memory RAM"] = memory
         return extracted
 
     def search(self, extracted):
@@ -117,6 +123,51 @@ class Enricher:
             return ""
         else: # 0
             return ""
+
+    def get_cap_n_mem(self, capacity):
+        given_mems = [ # from profile_*.json
+                "4gb", "2gb", "1.5gb", "16gb", "512mb",
+                "8gb", "3gb", "10gb", "1gb", "6gb"
+                ]
+        given_caps = [
+                "256gb", "1.5gb", "128gb", "512mb", "64gb",
+                "512gb", "8gb", "4mb", "6gb", "4gb", "2gb",
+                "128mb", "32gb", "256mb", "10gb", "3gb",
+                "1gb", "16gb"
+                ]
+        options = []
+        memory = ""
+        phones = self.phones_from_api
+        # TODO be more flexible
+        if len(phones) != 1 or "internal" not in phones[0]:
+            return capacity, memory
+        internal = phones[0]["internal"].replace("3 RAM", "3 GB RAM").replace("4/6 GB RAM", "4 GB RAM").replace("64/32 GB, 4 GB RAM", "64 GB, 4 GB RAM")
+        re_matches = re.finditer(r"((?P<cap>\d*\ [A-Z]{2}),\ (?P<mem>\d*\ [A-Z]{2}))\ RAM", internal, re.MULTILINE)
+        # Transform text
+        for match in re_matches:
+            option = match.groupdict()
+            for key in option:
+                option[key] = option[key].lower().replace(" ", "")
+            options.append(option)
+        if len(options) == 0:
+            return capacity, memory
+        elif len(options) == 1:
+            memory = options[0]["mem"]
+            if memory not in given_mems: # if not in profile*.json
+                return capacity, ""
+            else:
+                if capacity == "" and options[0]["cap"] in given_caps:
+                    capacity = options[0]["cap"]
+                return capacity, memory
+        else:
+            options_dict = {}
+            for option in options:
+                options_dict[option["cap"]] = option["mem"]
+            if capacity in options_dict:
+                return capacity, options_dict[capacity]
+            elif capacity == "":
+                return capacity, memory
+        return capacity, memory
 
     def string_found(self, substr, mainstr):
         substr = " " + substr.strip() + " "
