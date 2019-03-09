@@ -22,7 +22,7 @@ class Enricher:
             # print(json.dumps(self.phones_from_api, indent=4))
             pass
         elif len(self.phones_from_api) == 1:
-            # print(json.dumps(self.phones_from_api[0]["technology"], indent=4))
+            # print(json.dumps(self.phones_from_api[0]["size"], indent=4))
             pass
         extracted["Operating System"] = self.get_os()
         extracted["Network Connections"] = self.get_networks()
@@ -30,6 +30,7 @@ class Enricher:
         (capacity, memory) = self.get_cap_n_mem(capacity)
         extracted["Storage Capacity"] = capacity
         extracted["Memory RAM"] = memory
+        extracted["Phone Screen Size"] = self.get_size()
         return extracted
 
     def search(self, extracted):
@@ -168,6 +169,30 @@ class Enricher:
             elif capacity == "":
                 return capacity, memory
         return capacity, memory
+
+    def get_size(self):
+        phones = self.phones_from_api
+        if len(phones) != 1 or "size" not in phones[0]:
+            return ""
+        size_str = phones[0]["size"].lower()
+        matches = re.match(r"([^\ ]*)\ inches", size_str, re.MULTILINE)
+        if matches:
+            groups = list(matches.groups())
+            if len(groups) == 1:
+                size = float(groups[0])
+                if (size <= 3.5):
+                    return "less than 3.5 inches"
+                elif (size >= 3.6 and size <= 4):
+                    return "3.6 to 4 inches"
+                elif (size >= 4.1 and size <= 4.5):
+                    return "4.1 to 4.5 inches"
+                elif (size >= 4.6 and size <= 5):
+                    return "4.6 to 5 inches"
+                elif (size >= 5.1 and size <= 5.5):
+                    return "5.1 to 5.5 inches"
+                else:
+                    return "more than 5.6 inches"
+        return ""
 
     def string_found(self, substr, mainstr):
         substr = " " + substr.strip() + " "
