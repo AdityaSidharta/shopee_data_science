@@ -1,6 +1,10 @@
 import os
+import utils.api_keys
 
 project_path = os.getenv("PROJECT_PATH")
+
+fono_key = utils.api_keys.FONO_API_KEY
+fono_data_path = os.path.join(project_path, "data", "fono_api")
 
 data_path = os.path.join(project_path, "data")
 output_path = os.path.join(project_path, "output")
