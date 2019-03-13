@@ -37,3 +37,6 @@ mobile_dev_repo = os.path.join(data_path, 'mobile_data_info_dev_competition.csv'
 mobile_val_repo = os.path.join(data_path, 'mobile_data_info_val_competition.csv')
 mobile_test_repo = os.path.join(data_path, 'mobile_data_info_test_competition.csv')
 mobile_profile_json = os.path.join(data_path, 'mobile_profile_train.json')
+
+kyle_singapore_repo = os.path.join(data_path, 'kyle_singapore.csv')
+kyle_indonesia_repo = os.path.join(data_path, 'kyle_indonesia.csv')
