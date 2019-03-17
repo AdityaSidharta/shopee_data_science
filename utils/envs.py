@@ -11,6 +11,7 @@ output_path = os.path.join(project_path, "output")
 
 device_train_ct = os.path.join(data_path, "phone_counts.json")
 not_trained_devices = os.path.join(data_path, "not_trained_devices.json")
+gsm_arena = os.path.join(data_path, "gsmarena.json")
 
 model_cp_path = os.path.join(output_path, "model_checkpoint")
 logger_path = os.path.join(output_path, "logs")

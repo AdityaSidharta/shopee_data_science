@@ -10,15 +10,28 @@ class Enricher:
     """Enriches given mobile data."""
 
     def __init__(self):
+        with open(env.gsm_arena, "r") as f:
+            self.gsmarena = json.loads(f.read())
         self.not_trained_devices = json.loads(open(env.not_trained_devices, "r").read())
         self.Fon = FonApi(env.fono_key)
         self.phones_from_api = []
 
     def enrich(self, extracted):
-        self.phones_from_api = self.search(extracted)
         extracted["Enriched"] = True
+        self.phones_from_api = self.search(extracted)
+        # Messy hack to add gsm_arena data
+        if extracted["Phone Model"] != "" and extracted["Brand"] != "":
+            file_str = "{}_{}.json".format(extracted["Brand"], extracted["Phone Model"])
+            if file_str in self.gsmarena:
+                gsmdata = self.gsmarena[file_str]
+                extracted["Features"] = gsmdata["Features"]
+                extracted["Operating System"] = gsmdata["Operating System"]
+                if extracted["Storage Capacity"] == "":
+                    extracted["Storage Capacity"] = gsmdata["Storage Capacity"]
+                return extracted
         if len(self.phones_from_api) == 0:
             extracted["Enriched"] = False
+            return extracted
         # elif len(self.phones_from_api) > 1:
         #     # print(json.dumps(self.phones_from_api, indent=4))
         #     pass
