@@ -38,7 +38,7 @@ def fastai_prediction(train_df, test_df, columns, data_lm, RESULT_PATH):
         df_trn['label'] = df_trn['label'].astype(str)
         df_tst['label'] = df_tst['label'].astype(str)
 
-        df_trn, df_val = train_test_split(df_trn, test_size=0.2)
+        df_trn, df_val = train_test_split(df_trn, test_size=0.0001)
         data_class = TextClasDataBunch.from_df('', train_df=df_trn, valid_df=df_val, test_df=df_tst,
                                                vocab=data_lm.vocab)
 
@@ -46,9 +46,9 @@ def fastai_prediction(train_df, test_df, columns, data_lm, RESULT_PATH):
         learn_class.load_encoder(RESULT_PATH / 'encoder_lm.pkl')
 
         learn_class.fit_one_cycle(1, 1e-1, moms=(0.8, 0.7))
-        learn_class.fit_one_cycle(10, 1e-2, moms=(0.8, 0.7))
+        learn_class.fit_one_cycle(5, 1e-2, moms=(0.8, 0.7))
         learn_class.unfreeze()
-        learn_class.fit_one_cycle(20, 1e-2, moms=(0.8, 0.7))
+        learn_class.fit_one_cycle(5, 1e-2, moms=(0.8, 0.7))
 
         train_metric = learn_class.validate(learn_class.data.train_dl)
         val_metric = learn_class.validate(learn_class.data.valid_dl)

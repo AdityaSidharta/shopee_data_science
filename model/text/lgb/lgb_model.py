@@ -71,7 +71,7 @@ def create_prediction(topic_dict, topic, column_list):
         X_train = X_train[train_idx]
         Y_train = Y_train[train_idx]
 
-        X_dev, X_val, Y_dev, Y_val = train_test_split(X_train, Y_train, test_size=0.1)
+        X_dev, X_val, Y_dev, Y_val = train_test_split(X_train, Y_train, test_size=0.0001)
 
         X_test = topic_dict['X_test_{}'.format(topic)]
 
@@ -94,8 +94,7 @@ def create_prediction(topic_dict, topic, column_list):
                   'num_class': num_class}
 
         bst = lgb.train(params, ddev, num_boost_round=config.n_round, valid_sets=[ddev, dval],
-                        valid_names=['ddev', 'dval'],
-                        early_stopping_rounds=50)
+                        valid_names=['ddev', 'dval'])
         logger.info('{} ddev loss : {}'.format(column, bst.best_score['ddev']['multi_logloss']))
         logger.info('{} ddev error rate : {}'.format(column, bst.best_score['ddev']['multi_error']))
         logger.info('{} dval loss : {}'.format(column, bst.best_score['dval']['multi_logloss']))

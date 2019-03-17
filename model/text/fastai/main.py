@@ -2,15 +2,15 @@ import argparse
 from fastai.text import *
 from sklearn.externals import joblib
 
-from model.text.common.topic import beauty_columns, fashion_columns, mobile_columns
+from model.common.topic import beauty_columns, fashion_columns, mobile_columns
 from model.text.fastai.class_model import fastai_prediction
-from model.text.fastai.lm_model import create_data_lm, create_model_lm, load_lm
+from model.text.fastai.lm_model import create_data_lm, create_model_lm, clean_title, load_lm
 from utils.common import create_directory, get_datetime
 from utils.envs import *
 from utils.logger import logger
 
 if __name__ == '__main__':
-    logger.setup_logger('fastai')
+    logger.setup_logger('pytorch')
     create_directory(os.path.join(result_path, 'static'))
     RESULT_PATH = Path(os.path.join(result_path, 'static'))
 
@@ -38,13 +38,24 @@ if __name__ == '__main__':
         mobile_train = pd.read_csv(mobile_train_repo)
         mobile_test = pd.read_csv(mobile_test_repo)
 
+        kyle_indo_df = pd.read_csv(kyle_indonesia_repo)[['item_name']]
+        kyle_sing_df = pd.read_csv(kyle_singapore_repo)[['item_name']]
+
+        for df in [kyle_indo_df, kyle_sing_df]:
+            df.item_name = df.item_name.apply(lambda x: clean_title(x))
+
+        kyle_indo_df.columns = ['title']
+        kyle_sing_df.columns = ['title']
+
         full_text_df = pd.concat(
             [beauty_train[['title']],
              beauty_test[['title']],
              fashion_train[['title']],
              fashion_test[['title']],
              mobile_train[['title']],
-             mobile_test[['title']]])
+             mobile_test[['title']],
+             kyle_indo_df[['title']],
+             kyle_sing_df[['title']]])
 
         data_lm = create_data_lm(full_text_df)
         learn_lm = create_model_lm(data_lm)
