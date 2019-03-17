@@ -9,6 +9,9 @@ fono_data_path = os.path.join(project_path, "data", "fono_api")
 data_path = os.path.join(project_path, "data")
 output_path = os.path.join(project_path, "output")
 
+device_train_ct = os.path.join(data_path, "phone_counts.json")
+not_trained_devices = os.path.join(data_path, "not_trained_devices.json")
+
 model_cp_path = os.path.join(output_path, "model_checkpoint")
 logger_path = os.path.join(output_path, "logs")
 result_path = os.path.join(output_path, "result")

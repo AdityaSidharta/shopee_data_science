@@ -10,6 +10,7 @@ class Enricher:
     """Enriches given mobile data."""
 
     def __init__(self):
+        self.not_trained_devices = json.loads(open(env.not_trained_devices, "r").read())
         self.Fon = FonApi(env.fono_key)
         self.phones_from_api = []
 
@@ -41,12 +42,15 @@ class Enricher:
         return extracted
 
     def hack(self, extracted):
+        """Tailor results for Shopee..."""
         extracted["Memory RAM"] = ""
         if extracted["Brand"] != "" and extracted["Phone Model"] != "":
             extracted["Phone Model"] = " ".join([
                 extracted["Brand"],
                 extracted["Phone Model"]
                 ])
+            if extracted["Phone Model"] in self.not_trained_devices:
+                return extracted
         else:
             extracted["Brand"] = ""
             extracted["Phone Model"] = ""
