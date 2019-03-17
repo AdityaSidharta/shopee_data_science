@@ -35,6 +35,23 @@ class Enricher:
         for f in extracted["Features"]:
             features.add(f)
         extracted["Features"] = list(features)
+
+        # HACK
+        extracted = self.hack(extracted)
+        return extracted
+
+    def hack(self, extracted):
+        extracted["Memory RAM"] = ""
+        if extracted["Brand"] != "" and extracted["Phone Model"] != "":
+            extracted["Phone Model"] = " ".join([
+                extracted["Brand"],
+                extracted["Phone Model"]
+                ])
+        else:
+            extracted["Brand"] = ""
+            extracted["Phone Model"] = ""
+        extracted["Network Connections"] = ""
+        extracted["Phone Screen Size"] = ""
         return extracted
 
     def search(self, extracted):
