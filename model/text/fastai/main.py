@@ -2,7 +2,7 @@ import argparse
 from fastai.text import *
 from sklearn.externals import joblib
 
-from model.text.common.topic import beauty_columns, fashion_columns, mobile_columns
+from model.common.topic import beauty_columns, fashion_columns, mobile_columns
 from model.text.fastai.class_model import fastai_prediction
 from model.text.fastai.lm_model import create_data_lm, create_model_lm, clean_title, load_lm
 from utils.common import create_directory, get_datetime
@@ -10,7 +10,7 @@ from utils.envs import *
 from utils.logger import logger
 
 if __name__ == '__main__':
-    logger.setup_logger('fastai')
+    logger.setup_logger('pytorch')
     create_directory(os.path.join(result_path, 'static'))
     RESULT_PATH = Path(os.path.join(result_path, 'static'))
 

@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from model.text.common.topic import beauty_columns, fashion_columns, mobile_columns
+from model.common.topic import beauty_columns, fashion_columns, mobile_columns
 
 
 def concat_prediction(lgb_topic_result_dict, fastai_topic_result_dict):
@@ -18,7 +18,7 @@ def concat_prediction(lgb_topic_result_dict, fastai_topic_result_dict):
         fastai_array = fastai_df.values
         lgb_array = lgb_df.values
 
-        result_array = (fastai_array + lgb_array) / 2
+        result_array =(0.75 * fastai_array) + (0.25 * lgb_array)
         result_dict[column] = pd.DataFrame(result_array, columns=column_list)
     return result_dict
 

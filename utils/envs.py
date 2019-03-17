@@ -40,3 +40,17 @@ mobile_profile_json = os.path.join(data_path, 'mobile_profile_train.json')
 
 kyle_singapore_repo = os.path.join(data_path, 'kyle_singapore.csv')
 kyle_indonesia_repo = os.path.join(data_path, 'kyle_indonesia.csv')
+
+img_root = '/home/adityasidharta/git/shopee_data'
+
+img_beauty_dev_folder = os.path.join(img_root, 'beauty_dev')
+img_beauty_val_folder = os.path.join(img_root, 'beauty_val')
+img_beauty_test_folder = os.path.join(img_root, 'beauty_test')
+
+img_fashion_dev_folder = os.path.join(img_root, 'fashion_dev')
+img_fashion_val_folder = os.path.join(img_root, 'fashion_val')
+img_fashion_test_folder = os.path.join(img_root, 'fashion_test')
+
+img_mobile_dev_folder = os.path.join(img_root, 'mobile_dev')
+img_mobile_val_folder = os.path.join(img_root, 'mobile_val')
+img_mobile_test_folder = os.path.join(img_root, 'mobile_test')
