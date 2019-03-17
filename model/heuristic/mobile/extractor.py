@@ -57,7 +57,7 @@ class Extractor:
         # Then capacity
         storage = "Storage Capacity" # just to shorten the line
         (remaining, attrs[storage]) = self.extract_storage(remaining)
-        print(remaining)
+        # print(remaining)
 
         # Skip RAM. If capacity + device available, that's more useful
 
