@@ -12,8 +12,8 @@ class Enricher:
     def __init__(self):
         with open(env.gsm_arena, "r") as f:
             self.gsmarena = json.loads(f.read())
-        with open(env.not_trained_devices, "r") as f:
-            self.not_trained_devices = json.loads(f.read())
+        # with open(env.not_trained_devices, "r") as f:
+        #     self.not_trained_devices = json.loads(f.read())
         self.Fon = FonApi(env.fono_key)
         self.phones_from_api = []
 
