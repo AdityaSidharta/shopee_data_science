@@ -12,8 +12,8 @@ class Enricher:
     def __init__(self):
         with open(env.gsm_arena, "r") as f:
             self.gsmarena = json.loads(f.read())
-        with open(env.not_trained_devices, "r") as f:
-            self.not_trained_devices = json.loads(f.read())
+        # with open(env.trained_devices, "r") as f:
+        #     self.trained_devices = json.loads(f.read())
         self.Fon = FonApi(env.fono_key)
         self.phones_from_api = []
 
@@ -33,12 +33,8 @@ class Enricher:
                     extracted["Brand"],
                     extracted["Phone Model"]
                     ])
-                extracted = self.hack(extracted)
-                return extracted
         if len(self.phones_from_api) == 0:
             extracted["Enriched"] = False
-            extracted = self.hack(extracted)
-            return extracted
         # elif len(self.phones_from_api) > 1:
         #     # print(json.dumps(self.phones_from_api, indent=4))
         #     pass
@@ -69,9 +65,9 @@ class Enricher:
                 extracted["Brand"],
                 extracted["Phone Model"]
                 ])
-            # print(extracted["Phone Model"])
-            # if extracted["Phone Model"] in self.not_trained_devices:
-            #     print(json.dumps(extracted, indent=4))
+            # if extracted["Phone Model"] not in self.trained_devices:
+            #     # print(extracted["Phone Model"])
+            #     # print(json.dumps(extracted, indent=4))
             #     return extracted
             #     # pass
         else:
