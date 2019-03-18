@@ -12,29 +12,26 @@ class Enricher:
     def __init__(self):
         with open(env.gsm_arena, "r") as f:
             self.gsmarena = json.loads(f.read())
-        # with open(env.trained_devices, "r") as f:
-        #     self.trained_devices = json.loads(f.read())
+        with open(env.not_trained_devices, "r") as f:
+            self.not_trained_devices = json.loads(f.read())
         self.Fon = FonApi(env.fono_key)
         self.phones_from_api = []
 
     def enrich(self, extracted):
         extracted["Enriched"] = True
         self.phones_from_api = self.search(extracted)
-        # Messy hack to add gsm_arena data
-        if extracted["Phone Model"] != "" and extracted["Brand"] != "":
-            file_str = "{}_{}.json".format(extracted["Brand"], extracted["Phone Model"])
-            if file_str in self.gsmarena:
-                gsmdata = self.gsmarena[file_str]
-                extracted["Features"] = gsmdata["Features"]
-                extracted["Operating System"] = gsmdata["Operating System"]
-                if extracted["Storage Capacity"] == "":
-                    extracted["Storage Capacity"] = gsmdata["Storage Capacity"]
-                extracted["Phone Model"] = " ".join([
-                    extracted["Brand"],
-                    extracted["Phone Model"]
-                    ])
         if len(self.phones_from_api) == 0:
             extracted["Enriched"] = False
+        # Messy hack to add gsm_arena data
+        if "Phone Original" in extracted:
+            phone_original = extracted["Phone Original"]
+            if phone_original != "" and phone_original in self.gsmarena:
+                extracted["Enriched"] = True
+                gsmdata = self.gsmarena[phone_original]
+                for attr in gsmdata:
+                    if extracted[attr] == "":
+                        extracted[attr] = gsmdata[attr]
+
         # elif len(self.phones_from_api) > 1:
         #     # print(json.dumps(self.phones_from_api, indent=4))
         #     pass
@@ -59,20 +56,15 @@ class Enricher:
 
     def hack(self, extracted):
         """Tailor results for Shopee..."""
-        extracted["Memory RAM"] = ""
-        if extracted["Brand"] != "" and extracted["Phone Model"] != "":
-            extracted["Phone Model"] = " ".join([
-                extracted["Brand"],
-                extracted["Phone Model"]
-                ])
-            # if extracted["Phone Model"] not in self.trained_devices:
-            #     # print(extracted["Phone Model"])
-            #     # print(json.dumps(extracted, indent=4))
-            #     return extracted
-            #     # pass
+        if "Phone Original" in extracted:
+            extracted["Phone Model"] = extracted["Phone Original"]
         else:
-            extracted["Brand"] = ""
             extracted["Phone Model"] = ""
+        extracted["Memory RAM"] = ""
+        # if extracted["Phone Model"] in self.not_trained_devices:
+        #     # print(extracted["Phone Model"])
+        #     # print(json.dumps(extracted, indent=4))
+        #     return extracted
         extracted["Network Connections"] = ""
         extracted["Phone Screen Size"] = ""
         return extracted

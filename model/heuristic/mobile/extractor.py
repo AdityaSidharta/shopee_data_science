@@ -49,6 +49,7 @@ class Extractor:
         remaining = extracted_phone["remaining"]
         attrs["Brand"] = extracted_phone["Brand"]
         attrs["Phone Model"] = extracted_phone["Phone Model"]
+        attrs["Phone Original"] = extracted_phone["Phone Original"]
 
         # Then brand
         if attrs["Brand"] == "":
@@ -113,13 +114,15 @@ class Extractor:
         extracted = {
                 "remaining": remaining,
                 "Brand": "",
-                "Phone Model": ""
+                "Phone Model": "",
+                "Phone Original": ""
                 }
-        for brand, phone in self.profiles["Phone Models - Edited"]:
+        for brand, phone, original in self.profiles["Phone Models - Edited"]:
             phone_str = " ".join([brand, phone])
             if self.string_found(phone_str, remaining):
                 extracted["Brand"] = brand
                 extracted["Phone Model"] = phone
+                extracted["Phone Original"] = original
                 extracted["remaining"] = remaining.replace(
                         phone_str,
                         ""
@@ -128,6 +131,7 @@ class Extractor:
             elif len(phone) > 3 and self.string_found(phone, remaining):
                 extracted["Brand"] = brand
                 extracted["Phone Model"] = phone
+                extracted["Phone Original"] = original
                 extracted["remaining"] = remaining.replace(
                         phone,
                         ""
@@ -187,10 +191,10 @@ class Extractor:
                 continue
             if brand in profiles["Brand"]:
                 for device_perm in self.str_permutations(device):
-                    replace_models.append((brand, device_perm))
+                    replace_models.append((brand, device_perm, phone_model))
             else:
                 for device_perm in self.str_permutations(phone_model):
-                    replace_models.append(("", device_perm))
+                    replace_models.append(("", device_perm, phone_model))
         replace_models.sort(key=lambda x: len(x[1]), reverse=True)
         profiles["Phone Models - Edited"] = replace_models
 
