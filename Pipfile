@@ -20,6 +20,7 @@ category-encoders = "*"
 xgboost = "*"
 lightgbm = "*"
 argparse = "*"
+fastai = "*"
 
 [requires]
 python_version = "3.7"

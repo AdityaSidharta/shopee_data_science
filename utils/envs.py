@@ -45,7 +45,7 @@ mobile_profile_json = os.path.join(data_path, 'mobile_profile_train.json')
 kyle_singapore_repo = os.path.join(data_path, 'kyle_singapore.csv')
 kyle_indonesia_repo = os.path.join(data_path, 'kyle_indonesia.csv')
 
-img_root = '/home/adityasidharta/git/shopee_data'
+img_root = os.getenv("IMG_ROOT")
 
 img_beauty_dev_folder = os.path.join(img_root, 'beauty_dev')
 img_beauty_val_folder = os.path.join(img_root, 'beauty_val')

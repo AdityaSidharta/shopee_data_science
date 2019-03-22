@@ -8,6 +8,7 @@ def clean_title(x):
     x = x.lower()
     return x
 
+
 def create_data_lm(full_text_df):
     full_text_df.columns = ['text']
     full_text_df['label'] = 0
@@ -15,6 +16,7 @@ def create_data_lm(full_text_df):
     train_df, val_df = train_test_split(full_text_df, test_size=0.10)
     data_lm = TextLMDataBunch.from_df(path='', train_df=train_df, valid_df=val_df, bs=16)
     return data_lm
+
 
 def create_model_lm(data_lm):
     learn_lm = language_model_learner(data_lm, AWD_LSTM, drop_mult=0.3)
