@@ -47,6 +47,14 @@ def concat_prediction(lgb_topic_result_dict, fastai_topic_result_dict):
 
 def concat_prediction_image(lgb_topic_result_dict, fastai_topic_result_dict, image_topic_result_dict):
     result_dict = {}
+    fastai_ratio = 0.49
+    lgb_ratio = 0.01
+    image_ratio = 0.50
+
+    print("fastai_ratio : {}".format(fastai_ratio))
+    print("lgb_ratio : {}".format(lgb_ratio))
+    print("image_ratio : {}".format(image_ratio))
+
     for column in fastai_topic_result_dict.keys():
         fastai_df = fastai_topic_result_dict[column]
         lgb_df = lgb_topic_result_dict[column]
@@ -68,7 +76,7 @@ def concat_prediction_image(lgb_topic_result_dict, fastai_topic_result_dict, ima
         lgb_array = lgb_df.values
         image_array = image_df.values
 
-        result_array = (0.45 * fastai_array) + (0.45 * lgb_array) + (0.1 * image_array)
+        result_array = (fastai_ratio * fastai_array) + (lgb_ratio * lgb_array) + (image_ratio * image_array)
         result_dict[column] = pd.DataFrame(result_array, columns=column_list)
     return result_dict
 
