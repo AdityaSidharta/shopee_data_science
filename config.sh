@@ -2,6 +2,7 @@
 
 export PYTHONPATH=${PWD}
 export PROJECT_PATH=${PWD}
+export IMG_ROOT=${PWD}/data
 
 export PIPENV_VENV_IN_PROJECT=1
 export TMPDIR=$HOME/tmp
