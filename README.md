@@ -272,8 +272,8 @@ Ensembling the predictions from each of the ML model can be done using the follo
 
 Source codes to Mobile, Beauty and Fashion heuristics algorithms under `model/heuristics`.
 * Run mobile heuristics on your dataset using [notebooks/adi/kyle_prediction.ipynb]().
-* Run beauty fashion on your dataset using [model/heuristics/beauty_heuristics.py]().
-* Run fashion fashion on your dataset using [model/heuristics/fashion_heuristics.py]().
+* Run beauty heuristics on your dataset using [model/heuristics/beauty_heuristics.py]().
+* Run fashion heuristics on your dataset using [model/heuristics/fashion_heuristics.py]().
 
 
 ## Built With
