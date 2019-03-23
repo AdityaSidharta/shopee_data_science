@@ -267,8 +267,14 @@ All of the main algorithms is located under `model/` directory. Each of the main
 which can be ran directly to obtain the final predictions. `config.sh` is needed to be run before running each of the main
 python script to initialize the environment variables
 
-Ensembling the predictions from each of the model can be done using the following jupyter notebook:
+Ensembling the predictions from each of the ML model can be done using the following jupyter notebook:
  [notebooks/adi/concat_submission.ipynb](notebooks/adi/concat_submission.ipynb)
+
+Source codes to Mobile, Beauty and Fashion heuristics algorithms under `model/heuristics`.
+* Run mobile heuristics on your dataset using [notebooks/adi/kyle_prediction.ipynb]().
+* Run beauty fashion on your dataset using [model/heuristics/beauty_heuristics.py]().
+* Run fashion fashion on your dataset using [model/heuristics/fashion_heuristics.py]().
+
 
 ## Built With
 
