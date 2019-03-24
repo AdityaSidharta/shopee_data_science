@@ -14,7 +14,7 @@ The four algorithms are listed as follows:
 
 The architecture of the model is listed as follows:
 
-
+![alt text](https://github.com/AdityaSidharta/shopee_data_science/blob/master/Slides%20-%20ShopeeSense%20_3M_%20Model.jpg "Model Architecture")
 
 
 ## Getting Started
